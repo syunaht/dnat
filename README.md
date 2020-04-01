@@ -2,5 +2,5 @@
 修改：necovm
 
 ```shell
-git clone https://github.com/KagamigawaMeguri/dnat.git && cd nat && chmod +x install.sh && ./install.sh
+git clone https://github.com/KagamigawaMeguri/dnat.git && cd dnat && chmod +x install.sh && ./install.sh
 ```
