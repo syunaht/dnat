@@ -1,5 +1,25 @@
 #!/bin/bash
 
+check_sys(){
+    if [[ -f /etc/redhat-release ]]; then
+        release="centos"
+    elif cat /etc/issue | grep -q -E -i "debian"; then
+        release="debian"
+    elif cat /etc/issue | grep -q -E -i "ubuntu"; then
+        release="ubuntu"
+    elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat"; then
+        release="centos"
+    elif cat /proc/version | grep -q -E -i "debian"; then
+        release="debian"
+    elif cat /proc/version | grep -q -E -i "ubuntu"; then
+        release="ubuntu"
+    elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
+        release="centos"
+    fi
+    bit=`uname -m`
+}
+check_sys
+
 # stop service
 if [ -s /etc/systemd/system/dnat.service ] ; then
     systemctl stop dnat
@@ -54,9 +74,49 @@ PrivateTmp=true
 WantedBy=multi-user.target
 EOF
 
+cat > /etc/systemd/system/dsave.service <<\EOF
+[Unit]
+Description=Iptables Rules-Save Manager
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+User=root
+ExecStart=/usr/local/bin/iptables-restore
+ExecStartPost=/bin/rm /etc/.iptables-rules
+ExecStop=/usr/local/bin/iptables-save
+Restart=no
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cat > /usr/local/bin/iptables-restore <<\EOF
+#!/bin/bash
+sleep 2 &&
+/sbin/iptables-restore < /etc/.iptables-rules
+EOF
+chmod +x /usr/local/bin/iptables-restore
+
+cat > /usr/local/bin/iptables-save <<\EOF
+#!/bin/bash
+/sbin/iptables-save > /etc/.iptables-rules.bak
+/usr/bin/awk ' !x[$0]++' /etc/.iptables-rules.bak > /etc/.iptables-rules
+echo "COMMIT" >> /etc/.iptables-rules
+/bin/rm /etc/.iptables-rules.bak
+EOF
+chmod +x /usr/local/bin/iptables-save
+
 echo "启动系统服务"
 chmod 754 /etc/systemd/system/dnat.service
+chmod 754 /etc/systemd/system/dsave.service
 systemctl daemon-reload
 systemctl enable dnat > /dev/null 2>&1
+systemctl enable dsave > /dev/null 2>&1
 systemctl restart dnat > /dev/null 2>&1
+systemctl restart dsave > /dev/null 2>&1
+systemctl status dnat && echo
+systemctl status dsave && echo
 echo "安装完毕，请输入指令运行 nat 运行"

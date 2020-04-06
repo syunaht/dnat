@@ -9,7 +9,7 @@ mkdir $base 2>/dev/null
 conf=$base/conf
 touch $conf
 
-echo -e "欢迎使用 ${red}DNAT修改版(v${version})${black} 适用于 U/A/C/D 系统"
+echo -e "欢迎使用 ${red}DNAT修改版(v${version})${black}"
 echo
 echo -e "${red}用途${black}: 便捷的设置iptables端口转发（原作者 DNAT）"
 echo -e "${red}注意1${black}: 到域名的转发规则立刻生效，且在机器重启后仍然有效"
