@@ -115,8 +115,8 @@ chmod 754 /etc/systemd/system/dsave.service
 systemctl daemon-reload
 systemctl enable dnat > /dev/null 2>&1
 systemctl enable dsave > /dev/null 2>&1
-systemctl restart dnat > /dev/null 2>&1
-systemctl restart dsave > /dev/null 2>&1
+systemctl start dnat > /dev/null 2>&1
+systemctl start dsave > /dev/null 2>&1
 systemctl status dnat && echo
 systemctl status dsave && echo
 echo "安装完毕，请输入指令运行 nat 运行"
