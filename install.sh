@@ -95,16 +95,19 @@ EOF
 cat > /usr/local/bin/iptables-restore <<\EOF
 #!/bin/bash
 sleep 2 &&
-/sbin/iptables-restore < /etc/.iptables-rules
+/sbin/iptables-restore < /etc/dnat/.iptables-rules
 EOF
 chmod +x /usr/local/bin/iptables-restore
 
 cat > /usr/local/bin/iptables-save <<\EOF
 #!/bin/bash
-/sbin/iptables-save > /etc/.iptables-rules.bak
-/usr/bin/awk ' !x[$0]++' /etc/.iptables-rules.bak > /etc/.iptables-rules
-echo "COMMIT" >> /etc/.iptables-rules
-/bin/rm /etc/.iptables-rules.bak
+if [ -f "/etc/dnat/.iptables-rules" ]; then
+  /bin/rm /etc/dnat/.iptables-rules
+fi
+/sbin/iptables-save > /etc/dnat/.iptables-rules.bak
+/usr/bin/awk ' !x[$0]++' /etc/dnat/.iptables-rules.bak > /etc/dnat/.iptables-rules
+echo "COMMIT" >> /etc/dnat/.iptables-rules
+/bin/rm /etc/dnat/.iptables-rules.bak
 EOF
 chmod +x /usr/local/bin/iptables-save
 
