@@ -3,7 +3,7 @@ green="\033[32m"
 red="\033[31m"
 black="\033[0m"
 
-version="2.1.0"
+version="2.1.2"
 base=/etc/dnat
 mkdir $base 2>/dev/null
 conf=$base/conf
@@ -44,6 +44,7 @@ rmIptablesNat(){
                 iptables -t nat  -D POSTROUTING $cell1
             done
         done
+        /usr/local/bin/iptables-save
 }
 
 addDnat(){

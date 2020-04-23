@@ -61,6 +61,7 @@ echo "注册系统服务"
 cat > /etc/systemd/system/dnat.service <<\EOF
 [Unit]
 Description=DNAT Manager
+After=network.target nss-lookup.target systemd-resolved.service
 
 [Service]
 Type=simple
@@ -77,15 +78,13 @@ EOF
 cat > /etc/systemd/system/dsave.service <<\EOF
 [Unit]
 Description=Iptables Rules-Save Manager
-After=network.target
+After=network.target nss-lookup.target systemd-resolved.service
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 User=root
 ExecStart=/usr/local/bin/iptables-restore
-ExecStartPost=/bin/rm /etc/.iptables-rules
-ExecStop=/usr/local/bin/iptables-save
 Restart=no
 PrivateTmp=true
 
