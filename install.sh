@@ -110,7 +110,7 @@ echo "COMMIT" >> /etc/dnat/.iptables-rules
 /bin/rm /etc/dnat/.iptables-rules.bak
 EOF
 chmod +x /usr/local/bin/iptables-save
->/etc/dnat/.iptables-rules
+touch /etc/dnat/.iptables-rules
 
 echo "启动系统服务"
 chmod 754 /etc/systemd/system/dnat.service
